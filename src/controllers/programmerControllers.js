@@ -45,15 +45,8 @@ const getProgrammerById = async (req, res) => {
 
 const updateProgrammer = async (req, res) => {
   try {
-    const id = req.params.id;
+    const record = res.locals.record
     const params = req.body;
-
-    const record = await programmer.findByPk(id);
-
-    if(!record) {
-        res.status(STATUS_CODE.NOT_FOUND).send('Programmer ID not found.');
-        return;
-    }
 
     record.name = params.name || record.name;
     record.python = params.python || record.python;
@@ -68,4 +61,17 @@ const updateProgrammer = async (req, res) => {
   }
 };
 
-export { createProgrammer, getProgrammers, getProgrammerById, updateProgrammer };
+const deleteProgrammer = async (req, res) => { 
+    try {
+        const record = res.locals.record
+    
+        await record.destroy();
+    
+        res.status(STATUS_CODE.OK).send(`${record.id} ${record.name} - Deleted`);
+
+      } catch (error){
+        res.status(STATUS_CODE.SERVER_ERROR).send(error.message);
+      }
+};
+
+export { createProgrammer, getProgrammers, getProgrammerById, updateProgrammer, deleteProgrammer };
